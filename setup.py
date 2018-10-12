@@ -28,4 +28,8 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Topic :: Utilities',
     ],
+    install_requires=[
+        'Scrapy>=1.0.3',
+        'awscli>=1.10.51',
+    ],
 )
