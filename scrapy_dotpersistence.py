@@ -53,13 +53,13 @@ class DotScrapyPersistence(object):
             self._s3path = 's3://{0}/{1}/dot-scrapy/{2}/'.format(
                 self._bucket, self._projectid, self._spider
             )
-        logger.info('Syncing .scrapy directory from %s' % self._s3path)
+        logger.info('Syncing my custom .scrapy directory from %s' % self._s3path)
         cmd = ['aws', '--endpoint-url', self.AWS_ENDPOINT_URL, 's3', 'sync', self._s3path, self._localpath]
         self._call(cmd)
 
     def _store_data(self):
         # check for reason status here?
-        logger.info('Syncing .scrapy directory to %s' % self._s3path)
+        logger.info('Syncing my custom .scrapy directory to %s' % self._s3path)
         cmd = ['aws', '--endpoint-url', self.AWS_ENDPOINT_URL, 's3', 'sync', '--delete',
                self._localpath, self._s3path]
         self._call(cmd)
