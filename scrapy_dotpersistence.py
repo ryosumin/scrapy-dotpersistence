@@ -25,6 +25,8 @@ class DotScrapyPersistence(object):
             'ADDONS_AWS_ACCESS_KEY_ID')
         self.AWS_SECRET_ACCESS_KEY = crawler.settings.get(
             'ADDONS_AWS_SECRET_ACCESS_KEY')
+        self.AWS_ENDPOINT_URL = crawler.settings.get(
+            'AWS_ENDPOINT_URL')
         self._bucket = bucket
         self._bucket_folder = crawler.settings.get('ADDONS_AWS_USERNAME', '')
         self._projectid = os.environ['SCRAPY_PROJECT_ID']
@@ -35,7 +37,8 @@ class DotScrapyPersistence(object):
             'HOME': os.getenv('HOME'),
             'PATH': os.getenv('PATH'),
             'AWS_ACCESS_KEY_ID': self.AWS_ACCESS_KEY_ID,
-            'AWS_SECRET_ACCESS_KEY': self.AWS_SECRET_ACCESS_KEY
+            'AWS_SECRET_ACCESS_KEY': self.AWS_SECRET_ACCESS_KEY,
+            'AWS_ENDPOINT_URL': self.AWS_ENDPOINT_URL
         }
         self._load_data()
         crawler.signals.connect(self._store_data, signals.engine_stopped)
@@ -51,13 +54,13 @@ class DotScrapyPersistence(object):
                 self._bucket, self._projectid, self._spider
             )
         logger.info('Syncing .scrapy directory from %s' % self._s3path)
-        cmd = ['aws', 's3', 'sync', self._s3path, self._localpath]
+        cmd = ['aws', '--endpoint-url', self.AWS_ENDPOINT_URL, 's3', 'sync', self._s3path, self._localpath]
         self._call(cmd)
 
     def _store_data(self):
         # check for reason status here?
         logger.info('Syncing .scrapy directory to %s' % self._s3path)
-        cmd = ['aws', 's3', 'sync', '--delete',
+        cmd = ['aws', '--endpoint-url', self.AWS_ENDPOINT_URL, 's3', 'sync', '--delete',
                self._localpath, self._s3path]
         self._call(cmd)
 
